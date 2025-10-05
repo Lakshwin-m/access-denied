@@ -80,10 +80,32 @@ export default {
             height: "0",
           },
         },
+        "glitch": {
+          "0%, 100%": { transform: "translate(0)" },
+          "20%": { transform: "translate(-2px, 2px)" },
+          "40%": { transform: "translate(-2px, -2px)" },
+          "60%": { transform: "translate(2px, 2px)" },
+          "80%": { transform: "translate(2px, -2px)" },
+        },
+        "pulse-glow": {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.5" },
+        },
+        "unlock": {
+          "0%": { transform: "scale(1) rotate(0deg)", opacity: "1" },
+          "50%": { transform: "scale(1.2) rotate(5deg)", opacity: "0.8" },
+          "100%": { transform: "scale(1) rotate(0deg)", opacity: "1" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "glitch": "glitch 0.3s infinite",
+        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "unlock": "unlock 0.5s ease-out",
+      },
+      fontFamily: {
+        mono: ["JetBrains Mono", "Courier New", "monospace"],
       },
     },
   },
