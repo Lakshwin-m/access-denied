@@ -5,6 +5,7 @@ import { MatrixRain } from "@/components/MatrixRain";
 import { RoomCard } from "@/components/RoomCard";
 import { PasswordModal } from "@/components/PasswordModal";
 import { ProgressTracker } from "@/components/ProgressTracker";
+import { api } from "@/utils/api";
 
 // Mock rooms data
 import { rooms } from "@/data/rooms";
@@ -61,8 +62,9 @@ const Index = () => {
         lastUpdated: new Date().toISOString(),
       };
 
-      // Update localStorage
+      // Update both localStorage and Vercel API
       localStorage.setItem(teamId, JSON.stringify(teamData));
+      await api.saveTeam(teamData);
     } catch (err) {
       console.error("Error updating progress:", err);
     }

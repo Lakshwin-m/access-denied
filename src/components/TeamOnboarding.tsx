@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Users, ArrowRight, Terminal } from "lucide-react";
+import { api } from "@/utils/api";
 
 interface TeamOnboardingProps {
   isOpen: boolean;
@@ -42,7 +43,7 @@ export const TeamOnboarding = ({ isOpen, onComplete }: TeamOnboardingProps) => {
         .toString(36)
         .substr(2, 9)}`;
 
-      // Initialize team data in localStorage
+      // Initialize team data
       const teamData = {
         teamId,
         teamName: trimmedName,
@@ -51,15 +52,13 @@ export const TeamOnboarding = ({ isOpen, onComplete }: TeamOnboardingProps) => {
         lastUpdated: new Date().toISOString(),
       };
 
-      // Store in localStorage
-      localStorage.setItem(teamId, JSON.stringify(teamData));
+      // Save to Vercel API (shared across all devices)
+      await api.saveTeam(teamData);
 
-      // Also store current team ID for session management
+      // Also store in localStorage for offline capability
+      localStorage.setItem(teamId, JSON.stringify(teamData));
       localStorage.setItem("currentTeamId", teamId);
       localStorage.setItem("currentTeamName", trimmedName);
-
-      // Simulate async operation
-      await new Promise((resolve) => setTimeout(resolve, 500));
 
       onComplete(trimmedName, teamId);
     } catch (err) {
@@ -148,7 +147,7 @@ export const TeamOnboarding = ({ isOpen, onComplete }: TeamOnboardingProps) => {
           </div>
 
           <div className="mt-6 text-center text-xs text-muted-foreground font-mono">
-            Your team progress will be saved in your browser
+            Your team progress will be shared across all devices
           </div>
         </div>
       </div>

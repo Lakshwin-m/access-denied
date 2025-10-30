@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Shield, Users, Lock, Unlock, RefreshCw, X } from "lucide-react";
+import { Shield, Users, RefreshCw, X } from "lucide-react";
+import { api } from "@/utils/api";
 
-const ADMIN_PASSWORD = "admin2024"; // Change this to your desired password
+const ADMIN_PASSWORD = "admin2024";
 
 export const AdminDashboard = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -22,38 +23,41 @@ export const AdminDashboard = () => {
     }
   };
 
-  const loadTeams = () => {
+  const loadTeams = async () => {
     setLoading(true);
     try {
-      // Get all teams from localStorage
-      const allTeams: any[] = [];
-
-      // Loop through all localStorage keys
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith("team:")) {
-          try {
-            const data = localStorage.getItem(key);
-            if (data) {
-              const teamData = JSON.parse(data);
-              allTeams.push(teamData);
-            }
-          } catch (err) {
-            console.error(`Error loading team ${key}:`, err);
-          }
-        }
-      }
-
-      // Sort by progress (most rooms unlocked first)
-      const sortedTeams = allTeams.sort(
-        (a, b) => b.unlockedRooms.length - a.unlockedRooms.length
-      );
-
-      setTeams(sortedTeams);
+      // Get teams from Vercel API (shared across all devices)
+      const teamsData = await api.getTeams();
+      setTeams(teamsData);
     } catch (err) {
       console.error("Error loading teams:", err);
-      setError("Failed to load teams");
+      setError("Failed to load teams from server");
       setTimeout(() => setError(""), 2000);
+
+      // Fallback to localStorage if API fails
+      try {
+        const allTeams: any[] = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith("team:")) {
+            try {
+              const data = localStorage.getItem(key);
+              if (data) {
+                const teamData = JSON.parse(data);
+                allTeams.push(teamData);
+              }
+            } catch (err) {
+              console.error(`Error loading team ${key}:`, err);
+            }
+          }
+        }
+        const sortedTeams = allTeams.sort(
+          (a, b) => b.unlockedRooms.length - a.unlockedRooms.length
+        );
+        setTeams(sortedTeams);
+      } catch (fallbackErr) {
+        console.error("Fallback also failed:", fallbackErr);
+      }
     }
     setLoading(false);
   };
@@ -68,10 +72,11 @@ export const AdminDashboard = () => {
     setTeams([]);
   };
 
-  // Auto-refresh every 10 seconds when authenticated
+  // Auto-refresh every 5 seconds when authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      const interval = setInterval(loadTeams, 10000);
+      loadTeams();
+      const interval = setInterval(loadTeams, 5000);
       return () => clearInterval(interval);
     }
   }, [isAuthenticated]);
@@ -265,17 +270,17 @@ export const AdminDashboard = () => {
           )}
         </div>
 
-        {/* Debug Info (remove in production) */}
+        {/* Debug Info */}
         <div className="mt-8 terminal-border p-4 glow-blue">
-          <h3 className="text-lg font-mono mb-2">Debug Info</h3>
+          <h3 className="text-lg font-mono mb-2">System Info</h3>
           <p className="text-sm font-mono">Teams found: {teams.length}</p>
           <p className="text-sm font-mono">
-            LocalStorage keys: {localStorage.length}
+            Data Source: Vercel API + LocalStorage Fallback
           </p>
           <button
             onClick={() => {
-              console.log("All localStorage:", localStorage);
               console.log("Teams data:", teams);
+              console.log("API Base:", import.meta.env.VITE_API_BASE);
             }}
             className="mt-2 bg-blue-500 text-black px-3 py-1 font-mono text-sm"
           >
