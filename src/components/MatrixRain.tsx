@@ -13,7 +13,10 @@ export const MatrixRain = () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    const chars = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン01";
+    const chars =
+      "ACCESSDENIED0001110010101000011000110001110011001100110011001100110011001100110011001100110011001100".split(
+        ""
+      );
     const fontSize = 14;
     const columns = canvas.width / fontSize;
     const drops: number[] = Array(Math.floor(columns)).fill(1);

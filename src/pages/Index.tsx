@@ -1,27 +1,80 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Shield, Terminal } from "lucide-react";
+import { TeamOnboarding } from "@/components/TeamOnboarding";
 import { MatrixRain } from "@/components/MatrixRain";
 import { RoomCard } from "@/components/RoomCard";
 import { PasswordModal } from "@/components/PasswordModal";
 import { ProgressTracker } from "@/components/ProgressTracker";
+
+// Mock rooms data
 import { rooms } from "@/data/rooms";
-import { Shield, Terminal } from "lucide-react";
 
 type ModalStatus = "idle" | "denied" | "granted";
 
 const Index = () => {
+  const [teamName, setTeamName] = useState<string>("");
+  const [teamId, setTeamId] = useState<string>("");
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [unlockedRooms, setUnlockedRooms] = useState<Set<number>>(new Set());
   const [selectedRoom, setSelectedRoom] = useState<number | null>(null);
   const [modalStatus, setModalStatus] = useState<ModalStatus>("idle");
 
+  useEffect(() => {
+    // Check if team is already registered in localStorage
+    const savedTeamId = localStorage.getItem("currentTeamId");
+    const savedTeamName = localStorage.getItem("currentTeamName");
+
+    if (savedTeamId && savedTeamName) {
+      setTeamId(savedTeamId);
+      setTeamName(savedTeamName);
+
+      // Load unlocked rooms from localStorage
+      const teamData = localStorage.getItem(savedTeamId);
+      if (teamData) {
+        try {
+          const parsedData = JSON.parse(teamData);
+          setUnlockedRooms(new Set(parsedData.unlockedRooms || []));
+        } catch (err) {
+          console.error("Error parsing team data:", err);
+        }
+      }
+    } else {
+      setShowOnboarding(true);
+    }
+  }, []);
+
+  const handleTeamComplete = (name: string, id: string) => {
+    setTeamName(name);
+    setTeamId(id);
+    setShowOnboarding(false);
+  };
+
+  const updateTeamProgress = async (newUnlockedRooms: Set<number>) => {
+    if (!teamId) return;
+
+    try {
+      const teamData = {
+        teamId,
+        teamName,
+        unlockedRooms: Array.from(newUnlockedRooms),
+        createdAt: new Date().toISOString(),
+        lastUpdated: new Date().toISOString(),
+      };
+
+      // Update localStorage
+      localStorage.setItem(teamId, JSON.stringify(teamData));
+    } catch (err) {
+      console.error("Error updating progress:", err);
+    }
+  };
+
   const handleRoomClick = (roomId: number) => {
     if (unlockedRooms.has(roomId)) {
-      // Already unlocked, go directly to the link
       const room = rooms.find((r) => r.id === roomId);
       if (room) {
         window.open(room.link, "_blank");
       }
     } else {
-      // Show password modal
       setSelectedRoom(roomId);
       setModalStatus("idle");
     }
@@ -29,22 +82,20 @@ const Index = () => {
 
   const handlePasswordSubmit = (password: string) => {
     const room = rooms.find((r) => r.id === selectedRoom);
-    
     if (!room) return;
 
     if (password.toLowerCase() === room.password.toLowerCase()) {
-      // Correct password
       setModalStatus("granted");
-      setUnlockedRooms((prev) => new Set([...prev, room.id]));
-      
-      // Redirect after a short delay
+      const newUnlocked = new Set([...unlockedRooms, room.id]);
+      setUnlockedRooms(newUnlocked);
+      updateTeamProgress(newUnlocked);
+
       setTimeout(() => {
         window.open(room.link, "_blank");
         setSelectedRoom(null);
         setModalStatus("idle");
       }, 1500);
     } else {
-      // Wrong password
       setModalStatus("denied");
       setTimeout(() => {
         setModalStatus("idle");
@@ -53,20 +104,27 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden bg-black">
       <MatrixRain />
-      
+
       <div className="relative z-10 container mx-auto px-4 py-8 md:py-12">
-        {/* Header Section */}
         <header className="text-center mb-12 space-y-6">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <Shield className="w-10 h-10 text-destructive animate-pulse-glow" />
+            <Shield className="w-10 h-10 text-destructive animate-pulse" />
             <h1 className="text-4xl md:text-6xl font-bold text-destructive tracking-wider font-mono">
               ACCESS DENIED
             </h1>
-            <Shield className="w-10 h-10 text-destructive animate-pulse-glow" />
+            <Shield className="w-10 h-10 text-destructive animate-pulse" />
           </div>
-          
+
+          {teamName && (
+            <div className="terminal-border p-4 max-w-md mx-auto glow-green">
+              <div className="text-accent font-mono">
+                TEAM: <span className="font-bold">{teamName}</span>
+              </div>
+            </div>
+          )}
+
           <div className="terminal-border p-6 max-w-2xl mx-auto glow-red">
             <div className="flex items-start gap-3 mb-3">
               <Terminal className="w-5 h-5 text-accent mt-1" />
@@ -80,20 +138,16 @@ const Index = () => {
                 <p className="text-muted-foreground font-mono text-sm">
                   &gt; Enter the correct key to unlock your next coding mission
                 </p>
-                <p className="text-accent font-mono text-sm mt-2">
-                  &gt; Unauthorized access will be logged and traced
-                </p>
               </div>
             </div>
           </div>
 
-          <ProgressTracker 
-            unlockedCount={unlockedRooms.size} 
-            totalRooms={rooms.length} 
+          <ProgressTracker
+            unlockedCount={unlockedRooms.size}
+            totalRooms={rooms.length}
           />
         </header>
 
-        {/* Rooms Grid */}
         <main>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 max-w-7xl mx-auto">
             {rooms.map((room) => (
@@ -106,21 +160,10 @@ const Index = () => {
             ))}
           </div>
         </main>
-
-        {/* Footer */}
-        <footer className="mt-16 text-center">
-          <div className="inline-block terminal-border px-6 py-3 glow-cyan">
-            <p className="text-xs text-muted-foreground font-mono">
-              SECURITY LEVEL: <span className="text-destructive font-bold">MAXIMUM</span>
-            </p>
-            <p className="text-xs text-muted-foreground font-mono mt-1">
-              © 2025 CYBER RELAY EVENT | ALL RIGHTS RESERVED
-            </p>
-          </div>
-        </footer>
       </div>
 
-      {/* Password Modal */}
+      <TeamOnboarding isOpen={showOnboarding} onComplete={handleTeamComplete} />
+
       <PasswordModal
         isOpen={selectedRoom !== null}
         onClose={() => setSelectedRoom(null)}
