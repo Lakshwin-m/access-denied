@@ -5,10 +5,5 @@
       "src": "package.json",
       "use": "@vercel/static-build"
     }
-  ],
-  "functions": {
-    "api/teams/index.ts": {
-      "maxDuration": 10
-    }
-  }
+  ]
 }
