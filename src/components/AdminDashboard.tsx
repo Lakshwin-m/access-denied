@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Shield, Users, RefreshCw, X } from "lucide-react";
-import { supabaseDb } from "@/utils/supabaseDb";
+import { supabaseDb } from "@/utils/supabaseDB";
 
 const ADMIN_PASSWORD = "admin2024";
 

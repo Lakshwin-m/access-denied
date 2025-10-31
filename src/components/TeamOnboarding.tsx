@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Users, ArrowRight, Terminal } from "lucide-react";
-import { supabaseDb } from "../utils/supabaseDB";
+import { supabaseDb } from "@/utils/supabaseDB";
 
 interface TeamOnboardingProps {
   isOpen: boolean;
