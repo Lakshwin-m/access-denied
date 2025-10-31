@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Users, ArrowRight, Terminal } from "lucide-react";
-import { api } from "@/utils/api";
+import { supabaseDb } from "../utils/supabaseDB";
 
 interface TeamOnboardingProps {
   isOpen: boolean;
@@ -52,8 +52,8 @@ export const TeamOnboarding = ({ isOpen, onComplete }: TeamOnboardingProps) => {
         lastUpdated: new Date().toISOString(),
       };
 
-      // Save to Vercel API (shared across all devices)
-      await api.saveTeam(teamData);
+      // Save to Supabase (shared across all devices)
+      await supabaseDb.saveTeam(teamData);
 
       // Also store in localStorage for offline capability
       localStorage.setItem(teamId, JSON.stringify(teamData));

@@ -6,6 +6,7 @@ import { RoomCard } from "@/components/RoomCard";
 import { PasswordModal } from "@/components/PasswordModal";
 import { ProgressTracker } from "@/components/ProgressTracker";
 import { api } from "@/utils/api";
+import { supabaseDb } from "../utils/supabaseDB";
 
 // Mock rooms data
 import { rooms } from "@/data/rooms";
@@ -62,9 +63,9 @@ const Index = () => {
         lastUpdated: new Date().toISOString(),
       };
 
-      // Update both localStorage and Vercel API
+      // Update both localStorage and Supabase
       localStorage.setItem(teamId, JSON.stringify(teamData));
-      await api.saveTeam(teamData);
+      await supabaseDb.saveTeam(teamData);
     } catch (err) {
       console.error("Error updating progress:", err);
     }

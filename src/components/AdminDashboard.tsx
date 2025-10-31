@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Shield, Users, RefreshCw, X } from "lucide-react";
-import { api } from "@/utils/api";
+import { supabaseDb } from "@/utils/supabaseDb";
 
 const ADMIN_PASSWORD = "admin2024";
 
@@ -26,15 +26,15 @@ export const AdminDashboard = () => {
   const loadTeams = async () => {
     setLoading(true);
     try {
-      // Get teams from Vercel API (shared across all devices)
-      const teamsData = await api.getTeams();
+      // Get teams from Supabase (shared across all devices)
+      const teamsData = await supabaseDb.getTeams();
       setTeams(teamsData);
     } catch (err) {
       console.error("Error loading teams:", err);
       setError("Failed to load teams from server");
       setTimeout(() => setError(""), 2000);
 
-      // Fallback to localStorage if API fails
+      // Fallback to localStorage if Supabase fails
       try {
         const allTeams: any[] = [];
         for (let i = 0; i < localStorage.length; i++) {
@@ -72,12 +72,23 @@ export const AdminDashboard = () => {
     setTeams([]);
   };
 
-  // Auto-refresh every 5 seconds when authenticated
+  // Real-time updates and auto-refresh
   useEffect(() => {
     if (isAuthenticated) {
       loadTeams();
-      const interval = setInterval(loadTeams, 5000);
-      return () => clearInterval(interval);
+
+      // Subscribe to real-time updates
+      const subscription = supabaseDb.subscribeToTeams((updatedTeams) => {
+        setTeams(updatedTeams);
+      });
+
+      // Also auto-refresh every 10 seconds as backup
+      const interval = setInterval(loadTeams, 10000);
+
+      return () => {
+        subscription?.unsubscribe();
+        clearInterval(interval);
+      };
     }
   }, [isAuthenticated]);
 
@@ -270,17 +281,16 @@ export const AdminDashboard = () => {
           )}
         </div>
 
-        {/* Debug Info */}
+        {/* System Info */}
         <div className="mt-8 terminal-border p-4 glow-blue">
           <h3 className="text-lg font-mono mb-2">System Info</h3>
           <p className="text-sm font-mono">Teams found: {teams.length}</p>
           <p className="text-sm font-mono">
-            Data Source: Vercel API + LocalStorage Fallback
+            Data Source: Supabase + Real-time Updates
           </p>
           <button
             onClick={() => {
               console.log("Teams data:", teams);
-              console.log("API Base:", import.meta.env.VITE_API_BASE);
             }}
             className="mt-2 bg-blue-500 text-black px-3 py-1 font-mono text-sm"
           >
