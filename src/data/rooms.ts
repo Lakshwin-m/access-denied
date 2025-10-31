@@ -6,88 +6,64 @@ export interface Room {
 }
 
 export const rooms: Room[] = [
-  { 
-    id: 1, 
-    password: "cipher01", 
-    link: "https://leetcode.com/problems/two-sum/",
-    title: "Room 01"
+  {
+    id: 1,
+    password: "neonX21",
+    link: "https://leetcode.com/problems/two-sum/", // Easy
+    title: "Room of Coffee and Chaos",
   },
-  { 
-    id: 2, 
-    password: "matrix02", 
-    link: "https://leetcode.com/problems/valid-parentheses/",
-    title: "Room 02"
+  {
+    id: 2,
+    password: "cipher42",
+    link: "https://leetcode.com/problems/valid-parentheses/", // Easy
+    title: "Banana Republic of Bugs",
   },
-  { 
-    id: 3, 
-    password: "nexus03", 
-    link: "https://leetcode.com/problems/merge-two-sorted-lists/",
-    title: "Room 03"
+  {
+    id: 3,
+    password: "vector99",
+    link: "https://leetcode.com/problems/merge-two-sorted-lists/", // Easy
+    title: "The Infinite Loop Lounge",
   },
-  { 
-    id: 4, 
-    password: "vector04", 
-    link: "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/",
-    title: "Room 04"
+  {
+    id: 4,
+    password: "matrix08",
+    link: "https://leetcode.com/problems/move-zeroes/", // Easy
+    title: "404 Not Found Room",
   },
-  { 
-    id: 5, 
-    password: "proxy05", 
-    link: "https://leetcode.com/problems/valid-palindrome/",
-    title: "Room 05"
+  {
+    id: 5,
+    password: "glitch07",
+    link: "https://leetcode.com/problems/longest-palindrome/", // Medium
+    title: "The Segmentation Fault Hall",
   },
-  { 
-    id: 6, 
-    password: "binary06", 
-    link: "https://leetcode.com/problems/invert-binary-tree/",
-    title: "Room 06"
+  {
+    id: 6,
+    password: "decode13",
+    link: "https://leetcode.com/problems/rotate-image/", // Medium
+    title: "Runtime Panic Pavilion",
   },
-  { 
-    id: 7, 
-    password: "stack07", 
-    link: "https://leetcode.com/problems/valid-anagram/",
-    title: "Room 07"
+  {
+    id: 7,
+    password: "binary27",
+    link: "https://leetcode.com/problems/top-k-frequent-elements/", // Medium
+    title: "The Infinite Recursion Chamber",
   },
-  { 
-    id: 8, 
-    password: "heap08", 
-    link: "https://leetcode.com/problems/binary-search/",
-    title: "Room 08"
+  {
+    id: 8,
+    password: "kernel19",
+    link: "https://leetcode.com/problems/course-schedule/", // Medium
+    title: "The Null Pointer Nexus",
   },
-  { 
-    id: 9, 
-    password: "graph09", 
-    link: "https://leetcode.com/problems/flood-fill/",
-    title: "Room 09"
+  {
+    id: 9,
+    password: "proxy33",
+    link: "https://leetcode.com/problems/group-anagrams/", // Medium
+    title: "SegFault Spa",
   },
-  { 
-    id: 10, 
-    password: "crypto10", 
-    link: "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/",
-    title: "Room 10"
-  },
-  { 
-    id: 11, 
-    password: "decode11", 
-    link: "https://leetcode.com/problems/balanced-binary-tree/",
-    title: "Room 11"
-  },
-  { 
-    id: 12, 
-    password: "kernel12", 
-    link: "https://leetcode.com/problems/linked-list-cycle/",
-    title: "Room 12"
-  },
-  { 
-    id: 13, 
-    password: "shell13", 
-    link: "https://leetcode.com/problems/implement-queue-using-stacks/",
-    title: "Room 13"
-  },
-  { 
-    id: 14, 
-    password: "final14", 
-    link: "https://leetcode.com/problems/merge-intervals/",
-    title: "Room 14"
+  {
+    id: 10,
+    password: "quantum56",
+    link: "https://leetcode.com/problems/word-ladder/", // Hard
+    title: "The Final Boss Terminal",
   },
 ];

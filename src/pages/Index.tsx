@@ -136,7 +136,7 @@ const Index = () => {
                   RELAY CODING + CLUE HUNT
                 </h2>
                 <p className="text-muted-foreground font-mono text-sm">
-                  &gt; 14 locked challenges await your team
+                  &gt; {rooms.length} mysterious chambers await your team
                 </p>
                 <p className="text-muted-foreground font-mono text-sm">
                   &gt; Enter the correct key to unlock your next coding mission
@@ -159,6 +159,7 @@ const Index = () => {
                 roomNumber={room.id}
                 isUnlocked={unlockedRooms.has(room.id)}
                 onClick={() => handleRoomClick(room.id)}
+                roomTitle={room.title} // Pass the creative title
               />
             ))}
           </div>
